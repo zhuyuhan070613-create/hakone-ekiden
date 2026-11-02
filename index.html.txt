@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>箱根驿传 · 热血驿传数据库</title>
+  <!-- 引入 Font Awesome 图标库 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background-color: #0b0e14;
+      color: #e6edf3;
+      line-height: 1.6;
+    }
+
+    /* 动态渐变背景 */
+    .bg-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 30%, rgba(0, 180, 255, 0.08), transparent 40%),
+                  radial-gradient(circle at 80% 70%, rgba(255, 70, 70, 0.08), transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 头部导航 */
+    .navbar {
+      background: rgba(10, 14, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.8rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo i {
+      font-size: 2rem;
+      color: #ff4655;
+      filter: drop-shadow(0 0 8px rgba(255, 70, 85, 0.6));
+    }
+
+    .logo h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #fff, #a0c0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo span {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #8b9bb4;
+      letter-spacing: 1px;
+      margin-left: 4px;
+      -webkit-text-fill-color: #8b9bb4;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: #b0c4de;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-links a:hover {
+      color: #ff4655;
+    }
+
+    /* 主容器 */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 英雄区域 */
+    .hero {
+      margin-bottom: 3rem;
+      padding: 2rem 2.5rem;
+      background: linear-gradient(145deg, #141a24, #0f131c);
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hero-text h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .hero-text h2 .accent {
+      color: #ff4655;
+      text-shadow: 0 0 20px rgba(255, 70, 85, 0.4);
+    }
+
+    .hero-text p {
+      color: #9aaec9;
+      max-width: 600px;
+      margin-top: 0.8rem;
+      font-size: 1.05rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1rem 2rem;
+      border-radius: 60px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #7c8ea8;
+    }
+
+    /* 通用卡片样式 */
+    .card {
+      background: #121821;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1.8rem;
+      box-shadow: 0 10px 25px -10px #00000080;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 70, 85, 0.3);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.8rem;
+    }
+
+    .section-title i {
+      font-size: 1.8rem;
+      color: #ff4655;
+      background: rgba(255, 70, 85, 0.15);
+      padding: 10px;
+      border-radius: 16px;
+    }
+
+    .section-title h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .section-title span {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: #6e7f99;
+      margin-left: 8px;
+      letter-spacing: 1px;
+    }
+
+    /* 网格布局 */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.8rem;
+      margin-bottom: 3rem;
+    }
+
+    /* 历史时间线风格 */
+    .history-item {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .history-year {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #ff4655;
+      min-width: 70px;
+    }
+
+    .history-desc {
+      color: #b0c4de;
+      font-size: 0.95rem;
+    }
+
+    /* 规则列表 */
+    .rule-list {
+      list-style: none;
+    }
+
+    .rule-list li {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 1.2rem;
+      align-items: flex-start;
+    }
+
+    .rule-list li i {
+      color: #00b4ff;
+      margin-top: 4px;
+      font-size: 1.1rem;
+    }
+
+    /* 大学卡片 */
+    .uni-card {
+      background: linear-gradient(145deg, #161e2b, #0f141e);
+      border-radius: 20px;
+      padding: 1.5rem;
+      border-left: 4px solid;
+      transition: all 0.2s;
+    }
+
+    .uni-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 25px -10px #000000;
+    }
+
+    .uni-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .uni-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .uni-badge {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #ff4655;
+    }
+
+    .uni-stats {
+      display: flex;
+      gap: 1.5rem;
+      color: #8b9bb4;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .uni-stats i {
+      margin-right: 5px;
+      color: #ff4655;
+    }
+
+    .uni-roster {
+      font-size: 0.85rem;
+      color: #a0b4cc;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0.8rem;
+      border-radius: 12px;
+      max-height: 90px;
+      overflow-y: auto;
+    }
+
+    .uni-roster span {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin: 2px;
+      font-size: 0.75rem;
+    }
+
+    /* 成绩表格 */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 18px;
+      background: #0f141e;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      min-width: 800px;
+    }
+
+    th {
+      text-align: left;
+      padding: 1rem 1.2rem;
+      background: #1a212e;
+      color: #b0c4de;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    td {
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: #d0dcec;
+    }
+
+    tr:hover td {
+      background: rgba(255, 70, 85, 0.05);
+    }
+
+    .highlight {
+      color: #ff4655;
+      font-weight: 700;
+    }
+
+    .news-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .news-date {
+      font-size: 0.8rem;
+      color: #6e7f99;
+      min-width: 80px;
+    }
+
+    .news-text {
+      font-size: 0.95rem;
+    }
+
+    /* 滚动条美化 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0b0e14;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #2a3548;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ff4655;
+    }
+
+    /* 页脚 */
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      color: #4a5a72;
+      font-size: 0.8rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 2rem;
+    }
+
+    /* 响应式 */
+    @media (max-width: 1000px) {
+      .grid-2col, .grid-3col {
+        grid-template-columns: 1fr;
+      }
+      .hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+      }
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .nav-links {
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+  <div class="logo">
+    <i class="fas fa-running"></i>
+    <h1>箱根驿传 <span>HAKONE EKIDEN</span></h1>
+  </div>
+  <div class="nav-links">
+    <a href="#history"><i class="fas fa-landmark"></i> 历史</a>
+    <a href="#rules"><i class="fas fa-gavel"></i> 规则</a>
+    <a href="#unis"><i class="fas fa-university"></i> 参赛大学</a>
+    <a href="#records"><i class="fas fa-chart-line"></i> 历年成绩</a>
+    <a href="#news"><i class="fas fa-newspaper"></i> 最新资讯</a>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- 英雄区域 -->
+  <div class="hero">
+    <div class="hero-text">
+      <h2>箱根驿传 · <span class="accent">热血与荣耀</span></h2>
+      <p>东京至箱根，往返 217.1 公里。十人一心，襷带相连。自 1920 年延续至今的日本国民级青春驿传。</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-number">102</div>
+        <div class="stat-label">届历史</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">21</div>
+        <div class="stat-label">参赛队伍</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">10</div>
+        <div class="stat-label">区间接力</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">217.1</div>
+        <div class="stat-label">总公里</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 历史与规则两列 -->
+  <div class="grid-2col">
+    <!-- 历史 -->
+    <div id="history" class="card">
+      <div class="section-title">
+        <i class="fas fa-timeline"></i>
+        <h2>历史 <span>HISTORY</span></h2>
+      </div>
+      <div class="history-item">
+        <div class="history-year">1920</div>
+        <div class="history-desc">第1回大会举办，仅有早稻田、庆应、明治、东京高师四校参加。由“日本马拉松之父”金栗四三等人创办，旨在培养世界级跑者[citation:6]。</div>
+      </div>
+      <div class="history-item">
+        <div class="history-year">1927</div>
+        <div class="history-desc">中央大学首次夺冠，此后开启辉煌的连霸时代。早稻田与明治在早期占据主导[citation:12]。</div>
+      </div>
+      <div class="history-item">
+        <div class="history-year">1960s</div>
+        <div class="history-desc">中央大学达成史上最多的6连霸（第35回至第40回），至今仍是难以逾越的纪录[citation:9][citation:12]。</div>
+      </div>
+      <div class="history-item">
+        <div class="history-year">2015-2026</div>
+        <div class="history-desc">青山学院大学黄金时代：11年内8次夺冠，包括2024-2026的三连冠，并在2026年刷新总成绩纪录（10:37:34）[citation:3][citation:15]。</div>
+      </div>
+    </div>
+
+    <!-- 规则 -->
+    <div id="rules" class="card">
+      <div class="section-title">
+        <i class="fas fa-scroll"></i>
+        <h2>规则 <span>RULES</span></h2>
+      </div>
+      <ul class="rule-list">
+        <li><i class="fas fa-users"></i> <div><strong>参赛队伍</strong>：共21队，包括上届前10名种子校、预选赛前10名，以及关东学生联合队（成绩参考）[citation:6][citation:7]。</div></li>
+        <li><i class="fas fa-clock"></i> <div><strong>参赛门槛</strong>：选手须在16分30秒内完成5公里，或在34分钟内完成10公里[citation:7]。</div></li>
+        <li><i class="fas fa-route"></i> <div><strong>赛程</strong>：两天共10个区间。往路（1月2日）107.5km，复路（1月3日）109.6km，总距离217.1km[citation:6]。</div></li>
+        <li><i class="fas fa-flag-checkered"></i> <div><strong>襷带</strong>：象征学校荣誉的布带，而非接力棒。若落后过多，下一位选手需提前出发（提前跑规则）[citation:7][citation:13]。</div></li>
+        <li><i class="fas fa-trophy"></i> <div><strong>种子权</strong>：总成绩前10名获得翌年自动参赛资格。第11名及以后需参加10月预选赛[citation:2]。</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 参赛大学介绍 (基于第102回/2026年数据) -->
+  <div id="unis" style="margin-bottom: 3rem;">
+    <div class="section-title">
+      <i class="fas fa-university"></i>
+      <h2>参赛大学 <span>UNIVERSITIES · 第102回（2026）</span></h2>
+    </div>
+    <div class="grid-3col">
+      <!-- 青山学院大学 -->
+      <div class="uni-card" style="border-left-color: #00a0e9;">
+        <div class="uni-header">
+          <div class="uni-name">青山学院大学</div>
+          <div class="uni-badge">3连霸</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 9次优胜 · 种子校</div>
+        <div class="uni-roster">
+          <span>石川浩辉</span> <span>佐藤爱斗</span> <span>盐出翔太</span> <span>佐藤有一</span> <span>折田壮太</span> <span>若林宏树</span> <span>野村昭梦</span>
+        </div>
+      </div>
+      <!-- 驹泽大学 -->
+      <div class="uni-card" style="border-left-color: #8b1e3f;">
+        <div class="uni-header">
+          <div class="uni-name">驹泽大学</div>
+          <div class="uni-badge">7次优胜</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 种子校 · 2025复路纪录</div>
+        <div class="uni-roster">
+          <span>伊藤苍唯</span> <span>谷中晴</span> <span>山川拓马</span> <span>菅谷希弥</span> <span>佐藤圭汰</span>
+        </div>
+      </div>
+      <!-- 中央大学 -->
+      <div class="uni-card" style="border-left-color: #c8102e;">
+        <div class="uni-header">
+          <div class="uni-name">中央大学</div>
+          <div class="uni-badge">14次优胜</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 种子校 · 史上最多胜</div>
+        <div class="uni-roster">
+          <span>并川飒太</span> <span>七枝直</span> <span>佐藤大介</span> <span>吉居骏恭</span> <span>吉中祐太</span>
+        </div>
+      </div>
+      <!-- 早稻田大学 -->
+      <div class="uni-card" style="border-left-color: #b31b1b;">
+        <div class="uni-header">
+          <div class="uni-name">早稻田大学</div>
+          <div class="uni-badge">13次优胜</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 种子校 · 第1回参赛校</div>
+        <div class="uni-roster">
+          <span>山崎一吹</span> <span>间瀬田纯平</span> <span>堀野正太</span> <span>小平敦之</span> <span>瀬間元辅</span>
+        </div>
+      </div>
+      <!-- 东洋大学 -->
+      <div class="uni-card" style="border-left-color: #005a9c;">
+        <div class="uni-header">
+          <div class="uni-name">东洋大学</div>
+          <div class="uni-badge">4次优胜</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 种子校 · 25年连续出场</div>
+        <div class="uni-roster">
+          <span>内堀勇</span> <span>滨中尊</span> <span>网本佳悟</span> <span>久保田琉月</span> <span>薄根大河</span>
+        </div>
+      </div>
+      <!-- 东京国际大学 -->
+      <div class="uni-card" style="border-left-color: #e87722;">
+        <div class="uni-header">
+          <div class="uni-name">东京国际大学</div>
+          <div class="uni-badge">种子校</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 2区/3区纪录保持校</div>
+        <div class="uni-roster">
+          <span>中山拓真</span> <span>大村良纪</span> <span>前田宽明</span> <span>川内琉生</span> <span>久保茉润</span>
+        </div>
+      </div>
+      <!-- 帝京大学 -->
+      <div class="uni-card" style="border-left-color: #6c2c8c;">
+        <div class="uni-header">
+          <div class="uni-name">帝京大学</div>
+          <div class="uni-badge">种子校</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 20年连续出场</div>
+        <div class="uni-roster">
+          <span>广田陆</span> <span>柴户辽太</span> <span>松井一</span> <span>尾崎仁哉</span> <span>鎗田大辉</span>
+        </div>
+      </div>
+      <!-- 国学院大学 -->
+      <div class="uni-card" style="border-left-color: #1a4d8c;">
+        <div class="uni-header">
+          <div class="uni-name">国学院大学</div>
+          <div class="uni-badge">种子校</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 出云驿传2025优胜</div>
+        <div class="uni-roster">
+          <span>后村光星</span> <span>高山豪起</span> <span>饭国新太</span> <span>野田头臣</span> <span>尾熊迅斗</span>
+        </div>
+      </div>
+      <!-- 城西大学 -->
+      <div class="uni-card" style="border-left-color: #2e7d32;">
+        <div class="uni-header">
+          <div class="uni-name">城西大学</div>
+          <div class="uni-badge">种子校</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 第101回第6名</div>
+        <div class="uni-roster">
+          <span>大沼良太郎</span> <span>山中达贵</span> <span>小田伊织</span> <span>中岛巨翔</span> <span>岩田真之</span>
+        </div>
+      </div>
+      <!-- 创价大学 -->
+      <div class="uni-card" style="border-left-color: #ff6f00;">
+        <div class="uni-header">
+          <div class="uni-name">创价大学</div>
+          <div class="uni-badge">种子校</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 第101回第7名</div>
+        <div class="uni-roster">
+          <span>小池莉希</span> <span>石丸修那</span> <span>衣川勇太</span> <span>榎木凛太朗</span> <span>齐藤大空</span>
+        </div>
+      </div>
+      <!-- 日本大学 -->
+      <div class="uni-card" style="border-left-color: #b71c1c;">
+        <div class="uni-header">
+          <div class="uni-name">日本大学</div>
+          <div class="uni-badge">预选赛</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 4年连续出场</div>
+        <div class="uni-roster">
+          <span>山口彰太</span> <span>后藤玄树</span> <span>片桐禅太</span> <span>山口月晖</span> <span>中泽星音</span>
+        </div>
+      </div>
+      <!-- 东海大学 -->
+      <div class="uni-card" style="border-left-color: #1565c0;">
+        <div class="uni-header">
+          <div class="uni-name">东海大学</div>
+          <div class="uni-badge">预选赛</div>
+        </div>
+        <div class="uni-stats"><i class="fas fa-trophy"></i> 2019年优胜</div>
+        <div class="uni-roster">
+          <span>兵藤朱达</span> <span>花冈寿哉</span> <span>平井璃空</span> <span>南坂柚汰</span> <span>岩根正悟</span>
+        </div>
+      </div>
+    </div>
+    <div style="text-align: right; font-size: 0.8rem; color: #6e7f99; margin-top: 0.5rem;">
+      * 以上为部分主要参赛大学名单，完整名单可参考关东学生陆上竞技联盟公式站
+    </div>
+  </div>
+
+  <!-- 历年成绩（完整表格示例） -->
+  <div id="records" class="card" style="margin-bottom: 3rem;">
+    <div class="section-title">
+      <i class="fas fa-table"></i>
+      <h2>历年成绩 <span>RECENT RESULTS · 第80回~第102回</span></h2>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>回</th>
+            <th>年份</th>
+            <th>优胜大学</th>
+            <th>总成绩</th>
+            <th>往路</th>
+            <th>复路</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>第102回</td><td>2026</td><td class="highlight">青山学院大学</td><td>10:37:34</td><td>5:18:08</td><td>5:19:26</td></tr>
+          <tr><td>第101回</td><td>2025</td><td class="highlight">青山学院大学</td><td>10:41:19</td><td>5:20:01</td><td>5:21:18</td></tr>
+          <tr><td>第100回</td><td>2024</td><td class="highlight">青山学院大学</td><td>10:41:25</td><td>5:18:13</td><td>5:23:12</td></tr>
+          <tr><td>第99回</td><td>2023</td><td>驹泽大学</td><td>10:47:11</td><td>5:23:10</td><td>5:24:01</td></tr>
+          <tr><td>第98回</td><td>2022</td><td>青山学院大学</td><td>10:43:42</td><td>5:22:06</td><td>5:21:36</td></tr>
+          <tr><td>第97回</td><td>2021</td><td>驹泽大学</td><td>10:56:04</td><td>5:30:29</td><td>5:25:35</td></tr>
+          <tr><td>第96回</td><td>2020</td><td>青山学院大学</td><td>10:45:23</td><td>5:21:16</td><td>5:24:07</td></tr>
+          <tr><td>第95回</td><td>2019</td><td>东海大学</td><td>10:52:09</td><td>5:27:45</td><td>5:24:24</td></tr>
+          <tr><td>第94回</td><td>2018</td><td>青山学院大学</td><td>10:57:39</td><td>5:29:05</td><td>5:28:34</td></tr>
+          <tr><td>第93回</td><td>2017</td><td>青山学院大学</td><td>11:04:10</td><td>5:33:45</td><td>5:30:25</td></tr>
+          <tr><td>第92回</td><td>2016</td><td>青山学院大学</td><td>10:53:25</td><td>5:25:55</td><td>5:27:30</td></tr>
+          <tr><td>第91回</td><td>2015</td><td>青山学院大学</td><td>10:49:27</td><td>5:23:58</td><td>5:25:29</td></tr>
+          <tr><td>第90回</td><td>2014</td><td>东洋大学</td><td>10:52:51</td><td>5:27:13</td><td>5:25:38</td></tr>
+          <tr><td>第89回</td><td>2013</td><td>日本体育大学</td><td>11:13:26</td><td>5:40:15</td><td>5:33:11</td></tr>
+          <tr><td>第88回</td><td>2012</td><td>东洋大学</td><td>10:51:36</td><td>5:24:45</td><td>5:26:51</td></tr>
+          <tr><td>第87回</td><td>2011</td><td>早稻田大学</td><td>10:59:51</td><td>5:30:17</td><td>5:29:34</td></tr>
+          <tr><td>第86回</td><td>2010</td><td>东洋大学</td><td>11:10:13</td><td>5:32:02</td><td>5:38:11</td></tr>
+          <tr><td>第85回</td><td>2009</td><td>东洋大学</td><td>11:09:14</td><td>5:33:24</td><td>5:35:50</td></tr>
+          <tr><td>第84回</td><td>2008</td><td>驹泽大学</td><td>11:05:00</td><td>5:33:08</td><td>5:30:38</td></tr>
+          <tr><td>第83回</td><td>2007</td><td>顺天堂大学</td><td>11:05:29</td><td>5:33:13</td><td>5:32:16</td></tr>
+          <tr><td>第82回</td><td>2006</td><td>亚细亚大学</td><td>11:09:26</td><td>5:33:26</td><td>5:32:55</td></tr>
+          <tr><td>第81回</td><td>2005</td><td>驹泽大学</td><td>11:03:48</td><td>5:31:07</td><td>—</td></tr>
+          <tr><td>第80回</td><td>2004</td><td>驹泽大学</td><td>11:07:51</td><td>5:34:34</td><td>5:33:17</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top: 1rem; font-size: 0.8rem; color: #6e7f99;">
+      数据来源：关东学生陆上竞技联盟公式记录[citation:15] 及日本电视台历代优胜校[citation:8]。
+    </div>
+  </div>
+
+    <!-- 最新资讯 & 数据说明 -->
+  <div id="news" class="grid-2col">
+    <div class="card">
+      <div class="section-title">
+        <i class="fas fa-bolt"></i>
+        <h2>最新资讯 <span>NEWS</span></h2>
+      </div>
+      <div class="news-item">
+        <div class="news-date">2026.01.03</div>
+        <div class="news-text">第102回箱根驿传复路战罢，青山学院大学以10:37:34刷新赛会总纪录，达成三连霸。驹泽大学、国学院大学分列二、三位。</div>
+      </div>
+      <div class="news-item">
+        <div class="news-date">2026.01.02</div>
+        <div class="news-text">往路：青山学院大学1区石川浩辉区间赏，5区若林宏树逆转，往路优胜。</div>
+      </div>
+      <div class="news-item">
+        <div class="news-date">2025.10.19</div>
+        <div class="news-text">第102回箱根驿传预选赛结束，日本大学、东海大学等10校获得正赛资格。</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">
+        <i class="fas fa-database"></i>
+        <h2>数据说明 <span>DATA</span></h2>
+      </div>
+      <p style="color:#b0c4de; font-size:0.95rem;">
+        本网站为演示版，大学名单与历年成绩基于公开资料整理，完整参赛人员名单（每校10-12人）可参考
+        <a href="https://www.hakone-ekiden.jp/" target="_blank" style="color:#ff4655;">箱根驿传官方站</a>
+        及关东学生陆上竞技联盟公式记录。
+      </p>
+    </div>
+  </div>
+
+  <footer>
+    箱根驿传 · 热血驿传数据库 · 非官方粉丝站 · 2026
+  </footer>
+
+</div>
+</body>
+</html>
